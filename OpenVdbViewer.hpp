@@ -28,7 +28,6 @@ class OpenVdbViewer : public QGLViewer
 		// 		void setGrid( openvdb::FloatGrid::Ptr grid, std::string identifier ) { m_grids[identifier] = grid; updateGrids(); }
 		inline void setGrid( openvdb::GridBase::Ptr grid ) { m_grid = grid; updateGrids();  }
 
-		//TODO: wrap their ugly API
 		nvdb::Scene* gvdbScene() { return m_gvdb.getScene(); }
 
 		virtual void resizeEvent( QResizeEvent* e ) override;
