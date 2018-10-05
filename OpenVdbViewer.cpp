@@ -34,7 +34,7 @@ void OpenVdbViewer::draw()
 						 Vector3DF{50.f, 00.f, 00.f} );
 
 	if ( m_grid ) {
-		m_gvdb.Render ( SHADE_VOLUME, 0, 0 );
+		updateRenderingMode();
 		m_gvdb.ReadRenderTexGL ( 0, m_renderTexture );
 	}
 
@@ -105,7 +105,7 @@ void OpenVdbViewer::init()
 
 	m_gvdb.getScene()->SetSteps ( .25, 16, .25 );               // Set raycasting steps
 	m_gvdb.getScene()->SetExtinct ( -1.0f, 1.5f, 0.0f );        // Set volume extinction
-	m_gvdb.getScene()->SetVolumeRange ( 0.1f, 0.0f, .5f );  // Set volume value range
+	// m_gvdb.getScene()->SetVolumeRange ( 0.1f, 0.0f, .5f );  // Set volume value range
 	// 	m_gvdb.getScene()->SetVolumeRange ( 0.0f, 1.0f, -1.0f );  // Set volume value range (for a level set)
 	m_gvdb.getScene()->SetCutoff ( 0.005f, 0.005f, 0.0f );
 	// 	m_gvdb.getScene()->LinearTransferFunc( 0.00f, 0.25f, Vector4DF( 0, 0, 0, 0 ), Vector4DF( 1, 0, 0, 0.05f ) );
@@ -138,8 +138,6 @@ void OpenVdbViewer::init()
 
 	m_gvdb.AddRenderBuf ( 0, w, h, 4 );
 
-	if ( m_grid )
-		m_gvdb.Render ( SHADE_VOLUME, 0, 0 );
 
 	auto gvdbCamera = m_gvdb.getScene()->getCamera();
 	auto cameraPosition = gvdbCamera->getPos();
@@ -159,6 +157,12 @@ void OpenVdbViewer::resizeEvent( QResizeEvent* e )
 
 	createScreenQuadGL ( &m_renderTexture, width, height );
 	m_gvdb.ResizeRenderBuf ( 0, width, height, 4 );
+}
+
+void OpenVdbViewer::setVolumeRenderingMode( VolumeRenderingMode renderingMode )
+{
+	m_volumeRenderingMode = renderingMode;
+	updateRenderingMode();
 }
 
 
@@ -209,4 +213,19 @@ void OpenVdbViewer::setBackgroundColor( std::array< float, int( 4 ) > color )
 void OpenVdbViewer::setBackgroundColor( float r, float g, float b, float alpha )
 {
 	m_gvdb.getScene()->SetBackgroundClr ( r, g, b, alpha );
+}
+
+void OpenVdbViewer::updateRenderingMode()
+{
+	switch ( m_volumeRenderingMode ) {
+		case VolumeRenderingMode::Transparent: {
+			m_gvdb.Render ( SHADE_VOLUME, 0, 0 );
+			break;
+		}
+
+		case VolumeRenderingMode::Levelset: {
+			m_gvdb.Render ( SHADE_LEVELSET, 0, 0 );
+			break;
+		}
+	}
 }
