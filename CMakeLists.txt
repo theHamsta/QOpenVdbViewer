@@ -48,15 +48,18 @@ set( OPENVDB_LIBRARIES
                             Iex                                                                             
                             IlmThread                                                               
                             Imath)
-
-cuda_add_executable(VdbViewer
-					main.cpp 
+cuda_add_library( VdbViewer 
 					OpenVdbViewer.cpp
 					${MOC_UI}
-					${MOC_SRC}
-			    )
-
+                    ${MOC_SRC})
 
 target_link_libraries(VdbViewer PUBLIC Qt5::Widgets Qt5::DBus Qt5::OpenGL QGLViewer-qt5 ${OPENGL_LIBRARIES} /local/xu29mapu/projects/gvdb-voxels/source/gvdb_library/build/libgvdb.so 
 /local/xu29mapu/projects/cudpp/release/lib/libcudpp.a ${CUDA_LIBRARIES} ${Boost_LIBRARIES} ${OPENVDB_LIBRARIES} GLU)
+
+cuda_add_executable(testVdbViewer
+					main.cpp 
+                )
+target_link_libraries(testVdbViewer VdbViewer)
+
+
 
