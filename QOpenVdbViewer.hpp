@@ -10,15 +10,15 @@
 enum class VolumeRenderingMode { Levelset, Transparent };
 
 // TODO: make singleton if VolumeGVDB must be a singleton
-class OpenVdbViewer : public QGLViewer
+class QOpenVdbViewer : public QGLViewer
 {
 	public:
-		OpenVdbViewer();
-		OpenVdbViewer( OpenVdbViewer&& ) = delete;
-		OpenVdbViewer( const OpenVdbViewer& ) = delete;
-		OpenVdbViewer& operator=( OpenVdbViewer&& ) = delete;
-		OpenVdbViewer& operator=( const OpenVdbViewer& ) = delete;
-		virtual ~OpenVdbViewer();
+		QOpenVdbViewer();
+		QOpenVdbViewer( QOpenVdbViewer&& ) = delete;
+		QOpenVdbViewer( const QOpenVdbViewer& ) = delete;
+		QOpenVdbViewer& operator=( QOpenVdbViewer&& ) = delete;
+		QOpenVdbViewer& operator=( const QOpenVdbViewer& ) = delete;
+		virtual ~QOpenVdbViewer();
 
 		inline void setBackgroundColor( std::array<float, 4> color );
 		inline void setBackgroundColor( float r, float g, float b, float alpha = 1.f );

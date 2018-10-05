@@ -13,10 +13,10 @@ set(QT_MIN_VERSION "5.3.0")
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-find_package( Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS Core Gui Widgets Xml OpenGL DBus)
+find_package( Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS Core Gui Widgets Xml OpenGL DBus )
 find_package( OpenGL 3.0 REQUIRED )
 find_package( CUDA REQUIRED )
-find_package(Boost REQUIRED)
+find_package( Boost REQUIRED )
 
 add_definitions(-DBUILD_OPENVDB)
 set( GVDB_INCLUDE_DIR ~/.local/include )
@@ -49,7 +49,7 @@ set( OPENVDB_LIBRARIES
                             IlmThread                                                               
                             Imath)
 cuda_add_library( VdbViewer 
-					OpenVdbViewer.cpp
+					QOpenVdbViewer.cpp
 					${MOC_UI}
                     ${MOC_SRC})
 
@@ -59,7 +59,5 @@ target_link_libraries(VdbViewer PUBLIC Qt5::Widgets Qt5::DBus Qt5::OpenGL QGLVie
 cuda_add_executable(testVdbViewer
 					main.cpp 
                 )
+
 target_link_libraries(testVdbViewer VdbViewer)
-
-
-

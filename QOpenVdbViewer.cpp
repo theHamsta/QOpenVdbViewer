@@ -1,9 +1,9 @@
-#include "OpenVdbViewer.hpp"
+#include "QOpenVdbViewer.hpp"
 #include "QGLViewer/vec.h"
 #include "QResizeEvent"
 
 
-OpenVdbViewer::OpenVdbViewer()
+QOpenVdbViewer::QOpenVdbViewer()
 {
 	m_gvdb.SetVerbose ( true );
 	m_gvdb.SetCudaDevice ( GVDB_DEV_FIRST );
@@ -12,11 +12,11 @@ OpenVdbViewer::OpenVdbViewer()
 	init();
 }
 
-OpenVdbViewer::~OpenVdbViewer()
+QOpenVdbViewer::~QOpenVdbViewer()
 {
 }
 
-void OpenVdbViewer::draw()
+void QOpenVdbViewer::draw()
 {
 
 	GLfloat modelViewMatrix[16];
@@ -84,7 +84,7 @@ static void createScreenQuadGL( GLuint* texture, int width, int height )
 	glBindTexture ( GL_TEXTURE_2D, 0 );
 }
 
-void OpenVdbViewer::init()
+void QOpenVdbViewer::init()
 {
 
 	// Restore previous viewer state.
@@ -148,7 +148,7 @@ void OpenVdbViewer::init()
 	createScreenQuadGL( &m_renderTexture, w, h );
 }
 
-void OpenVdbViewer::resizeEvent( QResizeEvent* e )
+void QOpenVdbViewer::resizeEvent( QResizeEvent* e )
 {
 	QOpenGLWidget::resizeEvent( e );
 
@@ -159,14 +159,14 @@ void OpenVdbViewer::resizeEvent( QResizeEvent* e )
 	m_gvdb.ResizeRenderBuf ( 0, width, height, 4 );
 }
 
-void OpenVdbViewer::setVolumeRenderingMode( VolumeRenderingMode renderingMode )
+void QOpenVdbViewer::setVolumeRenderingMode( VolumeRenderingMode renderingMode )
 {
 	m_volumeRenderingMode = renderingMode;
 	updateRenderingMode();
 }
 
 
-QString OpenVdbViewer::helpString() const
+QString QOpenVdbViewer::helpString() const
 {
 	QString text( "<h2>S i m p l e V i e w e r</h2>" );
 	text += "Use the mouse to move the camera around the object. ";
@@ -198,24 +198,24 @@ QString OpenVdbViewer::helpString() const
 	return text;
 }
 
-void OpenVdbViewer::updateGrids()
+void QOpenVdbViewer::updateGrids()
 {
 	if ( m_grid ) {
 		m_gvdb.LoadVDB( m_grid );
 	}
 }
 
-void OpenVdbViewer::setBackgroundColor( std::array< float, int( 4 ) > color )
+void QOpenVdbViewer::setBackgroundColor( std::array< float, int( 4 ) > color )
 {
 	m_gvdb.getScene()->SetBackgroundClr ( color[0], color[1], color[2], color[3] );
 }
 
-void OpenVdbViewer::setBackgroundColor( float r, float g, float b, float alpha )
+void QOpenVdbViewer::setBackgroundColor( float r, float g, float b, float alpha )
 {
 	m_gvdb.getScene()->SetBackgroundClr ( r, g, b, alpha );
 }
 
-void OpenVdbViewer::updateRenderingMode()
+void QOpenVdbViewer::updateRenderingMode()
 {
 	switch ( m_volumeRenderingMode ) {
 		case VolumeRenderingMode::Transparent: {
