@@ -14,7 +14,7 @@ int main( int argc, char** argv )
 	viewer.setWindowTitle( "simpleViewer" );
 
 	viewer.show();
-	openvdb::io::File file( "/local/xu29mapu/projects/gvdb-voxels/source/shared_assets/" "bunny.vdb" );
+	openvdb::io::File file( "/local/xu29mapu/projects/gvdb-voxels/source/shared_assets/bunny.vdb" );
 	file.open();
 
 	try {
