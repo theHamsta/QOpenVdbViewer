@@ -3,12 +3,14 @@
 #include "QResizeEvent"
 
 
-QOpenVdbViewer::QOpenVdbViewer()
+QOpenVdbViewer::QOpenVdbViewer( QWidget* parent )
+	: QGLViewer( parent )
 {
-	m_gvdb.SetVerbose ( true );
-	m_gvdb.SetCudaDevice ( GVDB_DEV_FIRST );
-	//     if(m_gvdb.is
-	m_gvdb.Initialize ();
+	m_gvdb = std::make_shared<VolumeGVDB>();
+	m_gvdb->SetVerbose ( true );
+	m_gvdb->SetCudaDevice ( GVDB_DEV_FIRST );
+	//     if(m_gvdb->is
+	m_gvdb->Initialize ();
 	init();
 }
 
@@ -19,6 +21,14 @@ QOpenVdbViewer::~QOpenVdbViewer()
 void QOpenVdbViewer::draw()
 {
 
+	if ( m_updateMinMax ) {
+		std::cout << "h" << std::endl;
+		m_gvdb->getScene()->LinearTransferFunc ( 0, 1000, Vector4DF( 1, .5f, 0, 0.01f ), Vector4DF( 0, 0, 0, 0.005f ) );
+		std::cout << "b" << std::endl;
+		m_gvdb->CommitTransferFunc ();
+		std::cout << "x" << std::endl;
+	}
+
 	GLfloat modelViewMatrix[16];
 	GLfloat modelViewProjectionMatrix[16];
 	GLfloat projectionMatrix[16];
@@ -27,7 +37,7 @@ void QOpenVdbViewer::draw()
 	this->camera()->getProjectionMatrix( projectionMatrix );
 	qglviewer::Vec position = this->camera()->position();
 
-	nvdb::Camera3D* camera = m_gvdb.getScene()->getCamera();
+	nvdb::Camera3D* camera = m_gvdb->getScene()->getCamera();
 	//    camera->setMatrices(modelViewMatrix, projectionMatrix,
 	//                        Vector3DF{static_cast<float>(position[0]),static_cast<float>(position[1]),static_cast<float>(position[2])});
 	camera->setMatrices( modelViewMatrix, projectionMatrix,
@@ -35,8 +45,12 @@ void QOpenVdbViewer::draw()
 
 	if ( m_grid ) {
 		updateRenderingMode();
-		m_gvdb.ReadRenderTexGL ( 0, m_renderTexture );
+		m_gvdb->ReadRenderTexGL ( 0, m_renderTexture );
 	}
+
+	glDisable( GL_DEPTH_TEST );
+	glDisable( GL_CULL_FACE );
+	glDepthMask( GL_FALSE );
 
 	startScreenCoordinatesSystem();
 	int x_pos = 0;
@@ -92,54 +106,54 @@ void QOpenVdbViewer::init()
 
 	// 	char scnpath[1024];
 	//
-	// 	if ( !m_gvdb.getScene()->FindFile ( "/local/xu29mapu/projects/gvdb-voxels/source/shared_assets/" "bunny.vdb", scnpath ) ) {
+	// 	if ( !m_gvdb->getScene()->FindFile ( "/local/xu29mapu/projects/gvdb-voxels/source/shared_assets/" "bunny.vdb", scnpath ) ) {
 	// 		gprintf ( "Cannot find vdb file.\n" );
 	// 		gerror();
 	// 	}
 
-	m_gvdb.SetChannelDefault ( 16, 16, 16 );
+	m_gvdb->SetChannelDefault ( 16, 16, 16 );
 
-	// 	if ( !m_gvdb.LoadVDB ( scnpath ) ) {                  // Load OpenVDB format
+	// 	if ( !m_gvdb->LoadVDB ( scnpath ) ) {                  // Load OpenVDB format
 	// 		gerror();
 	// 	}
 
-	m_gvdb.getScene()->SetSteps ( .25, 16, .25 );               // Set raycasting steps
-	m_gvdb.getScene()->SetExtinct ( -1.0f, 1.5f, 0.0f );        // Set volume extinction
-	// m_gvdb.getScene()->SetVolumeRange ( 0.1f, 0.0f, .5f );  // Set volume value range
-	// 	m_gvdb.getScene()->SetVolumeRange ( 0.0f, 1.0f, -1.0f );  // Set volume value range (for a level set)
-	m_gvdb.getScene()->SetCutoff ( 0.005f, 0.005f, 0.0f );
-	// 	m_gvdb.getScene()->LinearTransferFunc( 0.00f, 0.25f, Vector4DF( 0, 0, 0, 0 ), Vector4DF( 1, 0, 0, 0.05f ) );
-	// 	m_gvdb.getScene()->LinearTransferFunc( 0.25f, 0.50f, Vector4DF( 1, 0, 0, 0.05f ), Vector4DF( 1, .5f, 0, 0.1f ) );
-	// 	m_gvdb.getScene()->LinearTransferFunc( 0.50f, 0.75f, Vector4DF( 1, .5f, 0, 0.1f ), Vector4DF( 1, 1, 0, 0.15f ) );
-	// 	m_gvdb.getScene()->LinearTransferFunc( 0.75f, 1.00f, Vector4DF( 1, 1, 0, 0.15f ), Vector4DF( 1, 1, 1, 0.2f ) );
-	// 	m_gvdb.CommitTransferFunc ();
-	//     m_gvdb.getScene()->SetSteps ( 0.25, 16, 0.25 );               // Set raycasting steps
-	//     m_gvdb.getScene()->SetExtinct ( -1.0f, 1.5f, 0.0f );      // Set volume extinction
-	//     m_gvdb.getScene()->SetVolumeRange ( 0.0f, 1.0f, -1.0f );  // Set volume value range (for a level set)
-	//     m_gvdb.getScene()->SetCutoff ( 0.005f, 0.01f, 0.0f );
-	m_gvdb.getScene()->LinearTransferFunc ( 0.00f, 0.25f, Vector4DF( 1, 1, 0, 0.05f ), Vector4DF( 1, 1, 0, 0.03f ) );
-	m_gvdb.getScene()->LinearTransferFunc ( 0.25f, 0.50f, Vector4DF( 1, 1, 1, 0.03f ), Vector4DF( 1, 0, 0, 0.02f ) );
-	m_gvdb.getScene()->LinearTransferFunc ( 0.50f, 0.75f, Vector4DF( 1, 0, 0, 0.02f ), Vector4DF( 1, .5f, 0, 0.01f ) );
-	m_gvdb.getScene()->LinearTransferFunc ( 0.75f, 1.00f, Vector4DF( 1, .5f, 0, 0.01f ), Vector4DF( 0, 0, 0, 0.005f ) );
-	//     m_gvdb.getScene()->SetBackgroundClr ( 0, 0, 0, 1 );
-	m_gvdb.CommitTransferFunc ();
+	m_gvdb->getScene()->SetSteps ( .25, 16, .25 );               // Set raycasting steps
+	m_gvdb->getScene()->SetExtinct ( -1.0f, 1.5f, 0.0f );        // Set volume extinction
+	// m_gvdb->getScene()->SetVolumeRange ( 0.1f, 0.0f, .5f );  // Set volume value range
+	m_gvdb->getScene()->SetVolumeRange ( 0.0f, 1.0f, -1.0f );  // Set volume value range (for a level set)
+	m_gvdb->getScene()->SetCutoff ( 0.005f, 0.005f, 0.0f );
+	// 	m_gvdb->getScene()->LinearTransferFunc( 0.00f, 0.25f, Vector4DF( 0, 0, 0, 0 ), Vector4DF( 1, 0, 0, 0.05f ) );
+	// 	m_gvdb->getScene()->LinearTransferFunc( 0.25f, 0.50f, Vector4DF( 1, 0, 0, 0.05f ), Vector4DF( 1, .5f, 0, 0.1f ) );
+	// 	m_gvdb->getScene()->LinearTransferFunc( 0.50f, 0.75f, Vector4DF( 1, .5f, 0, 0.1f ), Vector4DF( 1, 1, 0, 0.15f ) );
+	// 	m_gvdb->getScene()->LinearTransferFunc( 0.75f, 1.00f, Vector4DF( 1, 1, 0, 0.15f ), Vector4DF( 1, 1, 1, 0.2f ) );
+	// 	m_gvdb->CommitTransferFunc ();
+	//     m_gvdb->getScene()->SetSteps ( 0.25, 16, 0.25 );               // Set raycasting steps
+	//     m_gvdb->getScene()->SetExtinct ( -1.0f, 1.5f, 0.0f );      // Set volume extinction
+	//     m_gvdb->getScene()->SetVolumeRange ( 0.0f, 1.0f, -1.0f );  // Set volume value range (for a level set)
+	//     m_gvdb->getScene()->SetCutoff ( 0.005f, 0.01f, 0.0f );
+	m_gvdb->getScene()->LinearTransferFunc ( 0.00f, 0.25f, Vector4DF( 1, 1, 0, 0.05f ), Vector4DF( 1, 1, 0, 0.03f ) );
+	m_gvdb->getScene()->LinearTransferFunc ( 0.25f, 0.50f, Vector4DF( 1, 1, 1, 0.03f ), Vector4DF( 1, 0, 0, 0.02f ) );
+	m_gvdb->getScene()->LinearTransferFunc ( 0.50f, 0.75f, Vector4DF( 1, 0, 0, 0.02f ), Vector4DF( 1, .5f, 0, 0.01f ) );
+	m_gvdb->getScene()->LinearTransferFunc ( 0.75f, 1.00f, Vector4DF( 1, .5f, 0, 0.01f ), Vector4DF( 0, 0, 0, 0.005f ) );
+	//     m_gvdb->getScene()->SetBackgroundClr ( 0, 0, 0, 1 );
+	m_gvdb->CommitTransferFunc ();
 
 
 	Camera3D* cam = new Camera3D;
 	cam->setFov ( 50.0 );
 	cam->setOrbit ( Vector3DF( 20, 30, 0 ), Vector3DF( 0, 0, 0 ), 700, 1.0 );
-	m_gvdb.getScene()->SetCamera( cam );
+	m_gvdb->getScene()->SetCamera( cam );
 
 	Light* lgt = new Light;
 	lgt->setOrbit ( Vector3DF( 299, 57.3f, 0 ), Vector3DF( 132, -20, 50 ), 200, 1.0 );
-	m_gvdb.getScene()->SetLight ( 0, lgt );
+	m_gvdb->getScene()->SetLight ( 0, lgt );
 	int w = 1024;// this->geometry().width();
 	int h = 960; //this->geometry().height();
 
-	m_gvdb.AddRenderBuf ( 0, w, h, 4 );
+	m_gvdb->AddRenderBuf ( 0, w, h, 4 );
 
 
-	auto gvdbCamera = m_gvdb.getScene()->getCamera();
+	auto gvdbCamera = m_gvdb->getScene()->getCamera();
 	auto cameraPosition = gvdbCamera->getPos();
 	//     auto cameraOrientation = gvdbCamera->getVi();
 	//     this->camera()->setPosition( {cameraPosition.x,cameraPosition.y, cameraPosition.z});
@@ -156,13 +170,13 @@ void QOpenVdbViewer::resizeEvent( QResizeEvent* e )
 	const int height = e->size().height();
 
 	createScreenQuadGL ( &m_renderTexture, width, height );
-	m_gvdb.ResizeRenderBuf ( 0, width, height, 4 );
+	m_gvdb->ResizeRenderBuf ( 0, width, height, 4 );
 }
 
 void QOpenVdbViewer::setVolumeRenderingMode( VolumeRenderingMode renderingMode )
 {
 	m_volumeRenderingMode = renderingMode;
-	updateRenderingMode();
+	update();
 }
 
 
@@ -201,31 +215,37 @@ QString QOpenVdbViewer::helpString() const
 void QOpenVdbViewer::updateGrids()
 {
 	if ( m_grid ) {
-		m_gvdb.LoadVDB( m_grid );
+		m_gvdb->LoadVDB( m_grid );
 	}
 }
 
 void QOpenVdbViewer::setBackgroundColor( std::array< float, int( 4 ) > color )
 {
-	m_gvdb.getScene()->SetBackgroundClr ( color[0], color[1], color[2], color[3] );
+	m_gvdb->getScene()->SetBackgroundClr ( color[0], color[1], color[2], color[3] );
 }
 
 void QOpenVdbViewer::setBackgroundColor( float r, float g, float b, float alpha )
 {
-	m_gvdb.getScene()->SetBackgroundClr ( r, g, b, alpha );
+	m_gvdb->getScene()->SetBackgroundClr ( r, g, b, alpha );
 }
 
 void QOpenVdbViewer::updateRenderingMode()
 {
 	switch ( m_volumeRenderingMode ) {
 		case VolumeRenderingMode::Transparent: {
-			m_gvdb.Render ( SHADE_VOLUME, 0, 0 );
+			m_gvdb->Render ( SHADE_VOLUME, 0, 0 );
 			break;
 		}
 
 		case VolumeRenderingMode::Levelset: {
-			m_gvdb.Render ( SHADE_LEVELSET, 0, 0 );
+			m_gvdb->Render ( SHADE_LEVELSET, 0, 0 );
 			break;
 		}
 	}
 }
+
+// void QOpenVdbViewer::setMinMax( float min, float max )
+// {
+// 	if ( m_gvdb->getScene() ) {
+// 	}
+// }

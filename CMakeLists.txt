@@ -28,6 +28,7 @@ include_directories(
     ${Qt5Gui_INCLUDE_DIRS}
     ${Qt5Xml_INCLUDE_DIRS}
     ${Qt5OPENGL_INCLUDE_DIRS}
+    ${CUDA_INCLUDE_DIRECTORIES}
     ${GVDB_INCLUDE_DIR}
     /usr/include/x86_64-linux-gnu/qt5/QtOpenGL/
     )
@@ -35,8 +36,8 @@ include_directories(
 
 aux_source_directory( source SOURCES )
 
-file(GLOB UI RELATIVE  "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/ui/*.ui )
-file(GLOB UI_INCLUDES RELATIVE  "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp )
+file(GLOB UI RELATIVE  "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/*.ui )
+file(GLOB UI_INCLUDES RELATIVE  "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp )
 qt5_wrap_cpp(MOC_SRC ${UI_INCLUDES})
 qt5_wrap_ui(MOC_UI ${UI})
 
@@ -57,7 +58,7 @@ target_link_libraries(VdbViewer PUBLIC Qt5::Widgets Qt5::DBus Qt5::OpenGL QGLVie
 /local/xu29mapu/projects/cudpp/release/lib/libcudpp.a ${CUDA_LIBRARIES} ${Boost_LIBRARIES} ${OPENVDB_LIBRARIES} GLU)
 
 cuda_add_executable(testVdbViewer
-					main.cpp 
+					testVdbViewer.cpp 
                 )
 
 target_link_libraries(testVdbViewer VdbViewer)
