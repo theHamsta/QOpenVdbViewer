@@ -4,27 +4,28 @@
 
 
 
-int main( int argc, char** argv )
+int main(int argc, char** argv)
 {
-	QApplication application( argc, argv );
+	QApplication application(argc, argv);
 
 
 
 	QOpenVdbViewer viewer;
-	viewer.setWindowTitle( "simpleViewer" );
+	viewer.setWindowTitle("simpleViewer");
 
 	viewer.show();
-	openvdb::io::File file( "/local/xu29mapu/projects/gvdb-voxels/source/shared_assets/bunny.vdb" );
+	openvdb::io::File file("/local/xu29mapu/projects/gvdb-voxels/source/shared_assets/bunny.vdb");
 	file.open();
 
 	try {
 		auto grids = file.getGrids();
 
-		if ( grids->size() ) {
-			openvdb::GridBase::Ptr grid = grids->at( 0 );
-			viewer.setGrid( grid );
+		if (grids->size()) {
+			openvdb::GridBase::Ptr grid = grids->at(0);
+			viewer.setGrid(grid);
 		}
-	} catch ( std::exception& err ) {
+	}
+	catch (std::exception& err) {
 		std::cerr << err.what()   << std::endl;
 	}
 
