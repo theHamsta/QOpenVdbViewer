@@ -54,8 +54,8 @@ cuda_add_library( VdbViewer
 					${MOC_UI}
                     ${MOC_SRC})
 
-target_link_libraries(VdbViewer PUBLIC Qt5::Widgets Qt5::DBus Qt5::OpenGL QGLViewer-qt5 ${OPENGL_LIBRARIES} /local/xu29mapu/projects/gvdb-voxels/source/gvdb_library/build/libgvdb.so 
-/local/xu29mapu/projects/cudpp/release/lib/libcudpp.a ${CUDA_LIBRARIES} ${Boost_LIBRARIES} ${OPENVDB_LIBRARIES} GLU)
+target_link_libraries(VdbViewer PUBLIC Qt5::Widgets Qt5::DBus Qt5::OpenGL QGLViewer-qt5 ${OPENGL_LIBRARIES} /localhome/seitz_local/.local/lib/libgvdb.so /localhome/seitz_local/projects/gvdb-voxels/source/shared_cudpp/release/lib/libcudpp_hash_.a
+${CUDA_LIBRARIES} ${Boost_LIBRARIES} ${OPENVDB_LIBRARIES} GLU)
 
 cuda_add_executable(testVdbViewer
 					testVdbViewer.cpp 
