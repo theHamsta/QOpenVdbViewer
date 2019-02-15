@@ -70,14 +70,14 @@ class QOpenVdbViewer : public QGLViewer
     inline VolumeRenderingMode volumeRenderingMode() const { return m_volumeRenderingMode; }
 
   protected:
-    virtual void draw();
-    virtual void init();
+    virtual void draw() override;
+    virtual void init() override;
     inline virtual void update()
     {
         m_updateNecessary = true;
         QGLViewer::update();
     }
-    virtual QString helpString() const;
+    virtual QString helpString() const override;
     void updateRenderingMode();
     void updateGrids();
 
