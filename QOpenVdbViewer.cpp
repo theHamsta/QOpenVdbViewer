@@ -178,7 +178,7 @@ void QOpenVdbViewer::init()
 
 void QOpenVdbViewer::resizeEvent(QResizeEvent* e)
 {
-	QOpenGLWidget::resizeEvent(e);
+	QGLWidget::resizeEvent(e);
 
 	const int width = e->size().width();
 	const int height = e->size().height();
