@@ -2,13 +2,16 @@
 #ifndef Q_MOC_RUN
 #    pragma push_macro("Q_FOREACH")
 #    pragma push_macro("foreach")
+#    pragma push_macro("slots")
 #    undef Q_FOREACH
 #    undef foreach
+#    undef slots
 #    include <gvdb.h>
 #    include <openvdb/openvdb.h>
+#    pragma pop_macro("Q_FOREACH")
+#    pragma pop_macro("foreach")
+#    pragma pop_macro("slots")
 #endif
-#pragma pop_macro("Q_FOREACH")
-#pragma pop_macro("foreach")
 #include <QGLViewer/qglviewer.h>
 #include <array>
 #include <map>
