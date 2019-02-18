@@ -9,7 +9,6 @@ QOpenVdbViewer::QOpenVdbViewer(QWidget* parent) : QGLViewer(parent)
     m_gvdb = std::make_shared< VolumeGVDB >();
     m_gvdb->SetVerbose(true);
     m_gvdb->SetCudaDevice(GVDB_DEV_FIRST);
-    //     if(m_gvdb->is
     m_gvdb->Initialize();
     init();
 }
@@ -115,6 +114,7 @@ static void createScreenQuadGL(GLuint* texture, int width, int height)
 void QOpenVdbViewer::init()
 {
     // 	m_gvdb->getScene()->SetSteps ( 0.25, 16, 0.25 );               // Set raycasting steps
+    //
     // 	m_gvdb->getScene()->SetExtinct ( -1.0f, 1.5f, 0.0f );      // Set volume extinction
     // 	m_gvdb->getScene()->SetVolumeRange ( 0.0f, 1.0f, -1.0f );  // Set volume value range (for a level set)
     // 	m_gvdb->getScene()->LinearTransferFunc ( 0.00f, 0.25f, Vector4DF( 1, 1, 0, 0.05f ), Vector4DF( 1, 1, 0, 0.03f )
@@ -124,7 +124,7 @@ void QOpenVdbViewer::init()
     // 0, 0.005f ) ); 	    m_gvdb->getScene()->SetBackgroundClr ( 0, 0, 0, 1 ); 	m_gvdb->CommitTransferFunc ();
 
     // Restore previous viewer state.
-    restoreStateFromFile();
+    ///restoreStateFromFile();
 
     // 	char scnpath[1024];
     //
