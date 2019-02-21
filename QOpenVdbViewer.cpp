@@ -57,9 +57,9 @@ void QOpenVdbViewer::draw()
     this->camera()->getModelViewMatrix(modelViewMatrix);
     this->camera()->getModelViewProjectionMatrix(modelViewProjectionMatrix);
     this->camera()->getProjectionMatrix(projectionMatrix);
-    qglviewer::Vec position = this->camera()->position();
 
     nvdb::Camera3D* camera = m_gvdb->getScene()->getCamera();
+    //qglviewer::Vec position = this->camera()->position();
     //    camera->setMatrices(modelViewMatrix, projectionMatrix,
     //                        Vector3DF{static_cast<float>(position[0]),static_cast<float>(position[1]),static_cast<float>(position[2])});
     camera->setMatrices(modelViewMatrix, projectionMatrix, Vector3DF{ 50.f, 00.f, 00.f });

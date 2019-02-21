@@ -8,6 +8,7 @@
 #    undef slots
 #    include <gvdb.h>
 #    include <openvdb/openvdb.h>
+#    include <openvdb/Grid.h>
 #    pragma pop_macro("Q_FOREACH")
 #    pragma pop_macro("foreach")
 #    pragma pop_macro("slots")
@@ -19,6 +20,7 @@
 #include <string>
 
 #include "enum.h"
+#include "VdbUtils.hpp"
 
 BETTER_ENUM(VolumeRenderingMode, int, Voxel, Section2D, Section3D, EmptySkip, Trilinear, Tricubic, LevelSet, Volume,
             Off)
@@ -62,7 +64,10 @@ class QOpenVdbViewer : public QGLViewer
     // updateGrids(); }
     inline void setGrid(openvdb::GridBase::Ptr grid)
     {
-        m_grid = grid;
+        m_grid = openvdb::gridPtrCast<openvdb::FloatGrid>(grid);
+        if(!m_grid) {
+            m_grid = convertVdbGrid<openvdb::FloatGrid>(grid);
+        }
         updateGrids();
         update();
     }
@@ -86,7 +91,7 @@ class QOpenVdbViewer : public QGLViewer
 
     std::shared_ptr< VolumeGVDB > m_gvdb;
     GLuint m_renderTexture                    = -1;
-    openvdb::GridBase::Ptr m_grid             = nullptr;
+    openvdb::FloatGrid::Ptr m_grid            = nullptr;
     VolumeRenderingMode m_volumeRenderingMode = VolumeRenderingMode::Volume;
     float m_min                               = 0.f;
     float m_max                               = 1.f;
