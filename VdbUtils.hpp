@@ -80,18 +80,5 @@ typename OutGrid_T::Ptr convertVdbGrid(openvdb::GridBase::Ptr grid)
         auto accessor   = outGrid->getAccessor();
         transformValues(castedGrid->cbeginValueAll(), accessor, internal::ConversionOp< Int64Grid, OutGrid_T >::op);
     }
-    // else if (grid->isType< DoubleGrid >())
-    // transformValues(gridPtrCast< DoubleGrid >(grid)->cbeginValueAll(), outGrid->getAccessor(),
-    // internal::ConversionOp< DoubleGrid, OutGrid_T >::op);
-    // else if (grid->isType< Int32Grid >())
-    // transformValues(gridPtrCast< Int32Grid >(grid)->cbeginValueAll(), outGrid->getAccessor(),
-    // internal::ConversionOp< Int32Grid, OutGrid_T >::op);
-    // else if (grid->isType< Int64Grid >())
-    // transformValues(gridPtrCast< Int64Grid >(grid)->cbeginValueAll(), outGrid->getAccessor(),
-    // internal::ConversionOp< Int64Grid, OutGrid_T >::op);
-    // else if (grid->isType<openvdb::Vec3IGrid>())  CALL_OP(openvdb::Vec3IGrid);
-    // else if (grid->isType<openvdb::Vec3SGrid>())  CALL_OP(openvdb::Vec3SGrid);
-    // else if (grid->isType<openvdb::Vec3DGrid>())  CALL_OP(openvdb::Vec3DGrid);
-    // else if (grid->isType<openvdb::StringGrid>()) CALL_OP(openvdb::StringGrid);
     return outGrid;
 }
