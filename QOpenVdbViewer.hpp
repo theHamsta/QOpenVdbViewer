@@ -20,7 +20,7 @@
 #include <string>
 
 #include "enum.h"
-#include "VdbUtils.hpp"
+#include "VdbGridConversion.hpp"
 
 BETTER_ENUM(VolumeRenderingMode, int, Voxel, Section2D, Section3D, EmptySkip, Trilinear, Tricubic, LevelSet, Volume,
             Off)

@@ -1,5 +1,5 @@
 /*
- * VdbUtils.hpp
+ * VdbGridConversion.hpp
  * Copyright (C) 2019 seitz_local <seitz_local@lmeXX>
  *
  * Distributed under terms of the GPLv3 license.
